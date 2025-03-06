@@ -315,7 +315,7 @@ wheels = [
 
 [[package]]
 name = "chitgpt"
-version = "1.12.0"
+version = "1.13.0"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "ipykernel" },
@@ -326,9 +326,9 @@ dependencies = [
     { name = "numpydoc" },
     { name = "pillow" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/bc/80/1bed127fb497f44564cc01cd6929d36dbb079f7686f6a95c300feec81378/chitgpt-1.12.0.tar.gz", hash = "sha256:5321831da91954bc54e002999dc16c24177d7099af2b2647d5fcd7380754324f", size = 25621 }
+sdist = { url = "https://files.pythonhosted.org/packages/06/b5/2f9d4e0f8c6203d09f6e7c9f37e3e2fd85744a0ac80a3a914395fe40c765/chitgpt-1.13.0.tar.gz", hash = "sha256:5ed1f43007fb3ecc07e02a2cda9a254be739edfac3b5cfbca1cf733b60dd3fd9", size = 25782 }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/f3/45/3e36b76b1dc923e738fd3884d55781917a6ad4ab3797be25c74381273139/chitgpt-1.12.0-py3-none-any.whl", hash = "sha256:818b8a5fc2af5028b9fba06db986e24b945eed31c26979bc0e8af9f65022077a", size = 24028 },
+    { url = "https://files.pythonhosted.org/packages/ee/63/1b4976babd944a271f10c1a290b8a3157cfd6de27350000a3ab6730e7664/chitgpt-1.13.0-py3-none-any.whl", hash = "sha256:afc0fd29efd25453ff5ef19c0574c14b43a67d829faf1c68ac3290fd43f0825c", size = 24210 },
 ]
 
 [[package]]
@@ -340,7 +340,7 @@ dependencies = [
 ]
 
 [package.metadata]
-requires-dist = [{ name = "chitgpt", specifier = "==1.12.0" }]
+requires-dist = [{ name = "chitgpt", specifier = "==1.13.0" }]
 
 [[package]]
 name = "click"
