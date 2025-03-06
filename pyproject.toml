@@ -5,5 +5,5 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.10"
 dependencies = [
-    "chitgpt==1.13.0",
+    "chitgpt==1.15.0",
 ]
