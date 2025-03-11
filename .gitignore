@@ -6,3 +6,5 @@
 **/*.pyd
 .logs
 *.ipynb
+_private
+claude_imports

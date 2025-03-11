@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>chitChat | chit</title>
+    <meta charset="UTF-8">
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/9.1.6/marked.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px 20px 60px 20px;  /* Added padding for footer */
+            background: #f5f5f5;
+        }
+        .message {
+            margin: 20px 0;
+            padding: 15px;
+            border-radius: 10px;
+            background: white;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+            position: relative;  /* For absolute positioning of branch selector */
+        }
+        .message.system { background: #f0f0f0; }
+        .message.user { background: #f0f7ff; }
+        .message.assistant { background: white; }
+        .message-header {
+            margin-bottom: 10px;
+            font-size: 0.9em;
+            color: #666;
+        }
+        .branch-selector {
+            position: absolute;
+            bottom: 15px;
+            right: 15px;
+        }
+        select {
+            padding: 4px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+        .thumbnail {
+            max-width: 200px;
+            max-height: 200px;
+            cursor: pointer;
+            margin: 10px 0;
+        }
+        .current { border-left: 4px solid #007bff; }
+        pre {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            overflow-x: auto;
+        }
+        code {
+            font-family: monospace;
+            background: #f8f9fa;
+            padding: 2px 4px;
+            border-radius: 3px;
+        }
+        .footer {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background: #fff;
+            padding: 10px;
+            text-align: center;
+            border-top: 1px solid #eee;
+        }
+
+        .footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 20px;
+        }
+
+        .global-branch-selector select {
+            padding: 5px;
+            border-radius: 4px;
+            border: 1px solid #ccc;
+        }
+
+        .theme-toggle button {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2em;
+            padding: 5px;
+        }
+
+        /* Dark mode styles */
+        body.dark-mode {
+            background: #222;
+            color: #fff;
+        }
+
+        body.dark-mode .message {
+            background: #333;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+        }
+
+        body.dark-mode .message.system { background: #2a2a2a; }
+        body.dark-mode .message.user { background: #1a2635; }
+        body.dark-mode .message.assistant { background: #333; }
+
+        body.dark-mode .footer {
+            background: #333;
+            border-top: 1px solid #444;
+        }
+
+        body.dark-mode select {
+            background: #444;
+            color: #fff;
+            border-color: #555;
+        }
+
+        body.dark-mode code {
+            background: #444;
+        }
+
+        body.dark-mode pre {
+            background: #444;
+        }
+
+        
+    </style>
+</head>
+<body>
+    <h1>chitChat</h1>
+    <div class="info">
+        A conversation between Abhimanyu Pallavi Sudhir and anthropic/claude-3-opus-20240229. 
+        
+    </div>
+    <div id="chat-container"></div>
+    <div class="footer">
+        <div class="global-branch-selector">
+            <select id="globalBranchSelect">
+                <!-- Will be populated via JavaScript -->
+            </select>
+        </div>
+        <span class="footer-text">
+            made with <a href="https://github.com/abhimanyupallavisudhir/chit">chit</a> by <a href="https://abhimanyu.io">Abhimanyu Pallavi Sudhir</a>
+        </span>
+        <div class="theme-toggle">
+            <button id="themeToggle">🌙</button>
+        </div>
+    </div>
+    <script>
+        // Very first thing - basic logging
+        console.log('Script started');
+
+        const chatData = {"messages": {"fbdb35bd": {"id": "fbdb35bd", "message": {"role": "system", "content": "You are a helpful assistant."}, "children": {"master": "ece2e76a"}, "parent_id": null, "home_branch": "master"}, "ece2e76a": {"id": "ece2e76a", "message": {"role": "user", "content": "I would like to manage all my finances from a Jupyter notebook. Do UK banks provide APIs that I can easily access through Python? I have my money in\n* NatWest\n* Metro Bank\n* Revolut\n* Trading212\n* Robin hood\n* (Crypto) Metamask\n* (Crypto) Phantom\nWhat is actually the canonical, most efficient, way to do this?"}, "children": {"master": "1a5d6d6b"}, "parent_id": "fbdb35bd", "home_branch": "master"}, "1a5d6d6b": {"id": "1a5d6d6b", "message": {"role": "assistant", "content": " Let me break this down systematically for you. The UK and international fintech landscape for personal finance APIs is quite interesting:\n\nFor UK Banks (NatWest, Metro Bank):\n- UK banks are required to provide open banking APIs under PSD2 regulations\n- You can access these through the Open Banking API standard\n- For Python, you can use libraries like `nordigen` or `plaid` which provide wrappers around these APIs\n- NatWest specifically has good Open Banking API support\n- Metro Bank also supports Open Banking but has more limited API functionality\n\nFor Fintech Platforms (Revolut, Trading212):\n- Revolut offers a robust API, but it's primarily for business accounts. Personal accounts have limited API access\n- Trading212 doesn't provide a public API currently, which is a limitation\n\nFor US Platforms (Robinhood):\n- Robinhood has unofficial Python APIs (like `robin_stocks`) but they're not officially supported\n- Using unofficial APIs carries risks as they can break with updates\n\nFor Crypto Wallets (Metamask, Phantom):\n- Both Ethereum (Metamask) and Solana (Phantom) transactions can be tracked through their respective blockchain APIs\n- For Ethereum: `web3.py` library\n- For Solana: `solana-py` library\n\nThe most robust approach I'd recommend:\n\n1. Use Plaid as your primary aggregator for traditional banks. It provides a unified API for multiple banks and has good Python support.\n\nExample setup:\n```python\nfrom plaid import Client\nimport pandas as pd\n\nplaid_client = Client(client_id='YOUR_ID',\n                     secret='YOUR_SECRET',\n                     environment='sandbox')  # or 'development' for real data\n```\n\n2. For crypto, use direct blockchain queries:\n```python\nfrom web3 import Web3\nfrom solana.rpc.api import Client as SolanaClient\n\n# Ethereum setup\nw3 = Web3(Web3.HTTPProvider('YOUR_ETH_NODE'))\n\n# Solana setup\nsolana_client = SolanaClient('YOUR_SOLANA_NODE')\n```\n\n3. Create a unified dashboard:\n```python\ndef get_all_balances():\n    balances = {\n        'traditional': get_bank_balances(),  # via Plaid\n        'crypto': {\n            'ethereum': get_eth_balance(),\n            'solana': get_sol_balance()\n        }\n    }\n    return pd.DataFrame(balances)\n```\n\nThe main challenges you'll face:\n1. Some platforms (like Trading212) will require manual data export\n2. API rate limits and costs (especially for blockchain queries)\n3. Keeping API keys secure in your notebook\n\nWould you like me to elaborate on any particular aspect of this setup? For instance, I could provide more detailed code for setting up Plaid integration or handling blockchain queries.\n\nAlso, since security is crucial when dealing with financial data, I'd be happy to share best practices for managing API keys and sensitive data in Jupyter notebooks."}, "children": {"master": "5f7815dd", "branch_1": "f743c1bb"}, "parent_id": "ece2e76a", "home_branch": "master"}, "5f7815dd": {"id": "5f7815dd", "message": {"role": "user", "content": "Can you go into some more detail for setting up plaid integration?"}, "children": {"master": "de28cd5a"}, "parent_id": "1a5d6d6b", "home_branch": "master"}, "de28cd5a": {"id": "de28cd5a", "message": {"role": "assistant", "content": " I'll walk you through setting up Plaid integration. First, you'll need to:\n\n1. Sign up for a Plaid account at https://dashboard.plaid.com/signup\n2. Create a new API key pair in their dashboard\n3. Install the Python Plaid library: `pip install plaid-python`\n\nHere's a comprehensive example showing how to connect and fetch data:\n\n```python\nfrom plaid import Client\nfrom plaid.model.country_code import CountryCode\nfrom plaid.model.products import Products\nfrom plaid.model.link_token_create_request import LinkTokenCreateRequest\nfrom plaid.model.link_token_create_request_user import LinkTokenCreateRequestUser\nimport pandas as pd\nfrom datetime import datetime, timedelta\n\n# Initialize the client\nclient = Client(\n    client_id='YOUR_CLIENT_ID',\n    secret='YOUR_SECRET_KEY',\n    environment='sandbox'  # Use 'development' for real data\n)\n\n# Create a link token (needed for initial bank account linking)\ndef create_link_token():\n    request = LinkTokenCreateRequest(\n        products=[Products('transactions')],\n        client_name=\"Your App Name\",\n        country_codes=[CountryCode('GB')],\n        language='en',\n        user=LinkTokenCreateRequestUser(\n            client_user_id='unique_user_id'\n        )\n    )\n    response = client.link_token_create(request)\n    return response['link_token']\n\n# Exchange public token for access token\ndef get_access_token(public_token):\n    exchange_response = client.item_public_token_exchange(public_token)\n    access_token = exchange_response['access_token']\n    return access_token\n\n# Get account balances\ndef get_account_balances(access_token):\n    try:\n        response = client.accounts_balance_get(access_token)\n        accounts = response['accounts']\n        \n        balances = []\n        for account in accounts:\n            balances.append({\n                'account_name': account['name'],\n                'account_type': account['type'],\n                'balance': account['balances']['current'],\n                'currency': account['balances']['iso_currency_code'],\n                'last_updated': datetime.now().strftime('%Y-%m-%d %H:%M:%S')\n            })\n        \n        return pd.DataFrame(balances)\n    except Exception as e:\n        print(f\"Error fetching balances: {str(e)}\")\n        return None\n\n# Get transactions for a date range\ndef get_transactions(access_token, start_date, end_date):\n    try:\n        response = client.transactions_get(\n            access_token,\n            start_date=start_date,\n            end_date=end_date\n        )\n        \n        transactions = []\n        for transaction in response['transactions']:\n            transactions.append({\n                'date': transaction['date'],\n                'name': transaction['name'],\n                'amount': transaction['amount'],\n                'currency': transaction['iso_currency_code'],\n                'category': transaction['category'][0] if transaction['category'] else 'Uncategorized',\n                'account': transaction['account_id']\n            })\n        \n        return pd.DataFrame(transactions)\n    except Exception as e:\n        print(f\"Error fetching transactions: {str(e)}\")\n        return None\n\n# Example usage for regular balance checking\ndef check_all_balances():\n    # You would store these access tokens securely after initial setup\n    access_tokens = ['TOKEN1', 'TOKEN2']  # One for each linked bank\n    \n    all_balances = pd.DataFrame()\n    for token in access_tokens:\n        balances = get_account_balances(token)\n        if balances is not None:\n            all_balances = pd.concat([all_balances, balances])\n    \n    return all_balances\n\n# Example usage for transaction analysis\ndef analyze_monthly_spending(access_token):\n    end_date = datetime.now()\n    start_date = end_date - timedelta(days=30)\n    \n    transactions = get_transactions(\n        access_token,\n        start_date.strftime('%Y-%m-%d'),\n        end_date.strftime('%Y-%m-%d')\n    )\n    \n    if transactions is not None:\n        # Group by category and sum amounts\n        spending_by_category = transactions.groupby('category')['amount'].sum()\n        return spending_by_category\n    \n    return None\n```\n\nA few important notes:\n\n1. Security:\n   - Never store API keys or access tokens directly in your notebook\n   - Use environment variables or a secure secret management solution\n   - Consider using `python-dotenv` for managing environment variables:\n   ```python\n   from dotenv import load_dotenv\n   import os\n   \n   load_dotenv()\n   client = Client(\n       client_id=os.getenv('PLAID_CLIENT_ID'),\n       secret=os.getenv('PLAID_SECRET_KEY'),\n       environment=os.getenv('PLAID_ENVIRONMENT')\n   )\n   ```\n\n2. Initial Setup:\n   - The first time you connect a bank, you'll need to:\n     1. Create a link token\n     2. Use Plaid's Link interface to connect the bank\n     3. Exchange the public token for an access token\n     4. Store the access token securely for future use\n\n3. Rate Limits:\n   - Be mindful of Plaid's rate limits\n   - Implement caching for frequently accessed data\n   - Consider using a job scheduler for regular updates\n\n4. Error Handling:\n   - Always implement robust error handling\n   - Consider retrying failed requests with exponential backoff\n\nWould you like me to provide more details about any specific aspect? For example, I could show you how to implement a more sophisticated transaction analysis system or how to set up secure credential storage."}, "children": {"master": null}, "parent_id": "5f7815dd", "home_branch": "master"}, "f743c1bb": {"id": "f743c1bb", "message": {"role": "user", "content": "Let's start with banking. What exactly do I need \"plaid\" for? Can I not just \"directly\" use the open banking API somehow? What does plaid do exactly?"}, "children": {"branch_1": "a0b6eac4"}, "parent_id": "1a5d6d6b", "home_branch": "branch_1"}, "a0b6eac4": {"id": "a0b6eac4", "message": {"role": "assistant", "content": " Good question! Let me clarify the Open Banking landscape:\n\nYou're right - you can access UK bank APIs directly without Plaid. Plaid is just one of several intermediaries that simplify the process, but it's not necessary.\n\nDirect UK Open Banking access works like this:\n1. You need to register as a Third Party Provider (TPP) with the Financial Conduct Authority (FCA) OR\n2. Partner with an existing regulated TPP who provides API access\n\nThe main TPP options for developers in the UK are:\n- TrueLayer\n- Nordigen (now GoCardless)\n- Yapily\n- Token.io\n- Salt Edge\n\nThese are much more UK/EU-focused than Plaid (which is primarily US-based). They handle the regulatory compliance and provide simpler API access.\n\nHere's what a direct implementation might look like using Nordigen/GoCardless (one of the more developer-friendly options):\n\n```python\nfrom nordigen import NordigenClient\nimport os\n\nclient = NordigenClient(\n    secret_id='your_secret_id',\n    secret_key='your_secret_key'\n)\n\n# Initialize token\ntoken_data = client.generate_token()\n\n# Get list of supported banks\ninstitutions = client.institution.get_institutions('GB')  # GB for United Kingdom\n\n# Get bank ID (e.g., for NatWest)\nnatwest = [bank for bank in institutions if 'NatWest' in bank['name']][0]\nnatwest_id = natwest['id']\n\n# Create link for bank authorization\nlink = client.initialize_session(\n    institution_id=natwest_id,\n    redirect_uri='your_redirect_uri',\n    reference_id='your_reference'\n)\n```\n\nThe key differences between using these services vs Plaid:\n1. They're specifically built for UK/EU Open Banking standards\n2. Often cheaper or have free tiers (some like Nordigen offer free access to account information)\n3. Better coverage of UK banks\n4. Comply with UK/EU regulations by default\n\nThe reason intermediaries exist at all is because the raw Open Banking APIs require:\n- Strong Customer Authentication (SCA) implementation\n- Security certificates management\n- Regular re-authorization flows\n- Complex regulatory compliance\n\nWould you like me to:\n1. Provide a more detailed implementation example for any of these providers?\n2. Explain the authorization flow in more detail?\n3. Break down the costs and limitations of each provider?"}, "children": {"branch_1": "70ed28fc", "branch_2": "501ee5bb"}, "parent_id": "f743c1bb", "home_branch": "branch_1"}, "70ed28fc": {"id": "70ed28fc", "message": {"role": "user", "content": "Wait hold on, there was no bank called \"NatWest\", but I found these in `institutions`:\n\n[{'id': 'NATWEST_NWBKGB2L', 'name': 'Natwest', 'bic': 'NWBKGB2L', 'transaction_total_days': '730', 'countries': ['GB'], 'logo': 'https://storage.googleapis.com/gc-prd-institution_icons-production/UK/PNG/natwest.png', 'max_access_valid_for_days': '90'}, {'id': 'NATWEST_CORP_NWBKGB2L', 'name': 'Natwest Bankline', 'bic': 'NWBKGB2L', 'transaction_total_days': '730', 'countries': ['GB'], 'logo': 'https://storage.googleapis.com/gc-prd-institution_icons-production/UK/PNG/natwestbankline.png', 'max_access_valid_for_days': '90'}, {'id': 'NATWEST_CS_NWBKGB2L', 'name': 'Natwest ClearSpend', 'bic': 'NWBKGB2L', 'transaction_total_days': '730', 'countries': ['GB'], 'logo': 'https://storage.googleapis.com/gc-prd-institution_icons-production/UK/PNG/natwest.png', 'max_access_valid_for_days': '90'}, {'id': 'NATWEST_INTERNATONAL_RBOSGIGI', 'name': 'Natwest International', 'bic': 'RBOSGIGI', 'transaction_total_days': '730', 'countries': ['GB'], 'logo': 'https://storage.googleapis.com/gc-prd-institution_icons-production/UK/PNG/natwest.png', 'max_access_valid_for_days': '90'}]\n\nwhich one is the right one?"}, "children": {"branch_1": "dcd5c57f"}, "parent_id": "a0b6eac4", "home_branch": "branch_1"}, "dcd5c57f": {"id": "dcd5c57f", "message": {"role": "assistant", "content": " For a personal NatWest account in the UK, you'll want the first one: `'NATWEST_NWBKGB2L'` with the name 'Natwest'. Let me explain the others:\n\n- `NATWEST_NWBKGB2L` - Standard personal and business banking\n- `NATWEST_CORP_NWBKGB2L` - Bankline is NatWest's corporate banking platform\n- `NATWEST_CS_NWBKGB2L` - ClearSpend is their business expense card platform\n- `NATWEST_INTERNATONAL_RBOSGIGI` - International banking (primarily Channel Islands/Isle of Man)\n\nThe BIC code 'NWBKGB2L' is NatWest's main UK bank identifier code. So for a regular UK NatWest account, your code would be:\n\n```python\nnatwest_id = 'NATWEST_NWBKGB2L'\n\n# Create link for bank authorization\nlink = client.initialize_session(\n    institution_id=natwest_id,\n    redirect_uri='your_redirect_uri',\n    reference_id='your_reference'\n)\n```\n\nWould you like to proceed with setting this up? We'll need to handle the authorization flow next, which involves redirecting to NatWest's authentication page."}, "children": {"branch_1": "dde550ae"}, "parent_id": "70ed28fc", "home_branch": "branch_1"}, "dde550ae": {"id": "dde550ae", "message": {"role": "user", "content": "and is this correct for revolut?\n[{'id': 'REVOLUT_REVOGB21', 'name': 'Revolut', 'bic': 'REVOGB21', 'transaction_total_days': '730', 'countries': ['GB'], 'logo': 'https://storage.googleapis.com/gc-prd-institution_icons-production/UK/PNG/revolut.png', 'max_access_valid_for_days': '90'}]"}, "children": {"branch_1": "dc8a5103"}, "parent_id": "dcd5c57f", "home_branch": "branch_1"}, "dc8a5103": {"id": "dc8a5103", "message": {"role": "assistant", "content": " Yes, that's correct! For Revolut in the UK, `'REVOLUT_REVOGB21'` is the right identifier. The BIC code 'REVOGB21' is Revolut's main UK bank identifier code.\n\nAn interesting thing to note from both the NatWest and Revolut data is the `transaction_total_days` and `max_access_valid_for_days` fields:\n- `transaction_total_days: '730'` means you can access up to 2 years of transaction history\n- `max_access_valid_for_days: '90'` means your authorization will last for 90 days before you need to re-authenticate\n\nWould you like to set up access for both banks? We can create parallel authorization flows for both NatWest and Revolut."}, "children": {"branch_1": "77eff9a9"}, "parent_id": "dde550ae", "home_branch": "branch_1"}, "501ee5bb": {"id": "501ee5bb", "message": {"role": "user", "content": "Wait, what is your_redirect_uri, your_reference? How do I get these?"}, "children": {"branch_2": "1a8ae7d3"}, "parent_id": "a0b6eac4", "home_branch": "branch_2"}, "1a8ae7d3": {"id": "1a8ae7d3", "message": {"role": "assistant", "content": " Ah, let me explain the authentication flow more concretely:\n\nFor a personal project in a Jupyter notebook, you need a way to handle the OAuth2 flow. Here's what happens:\n\n1. When a user (you) wants to connect to their bank:\n   - The bank needs to verify you want to give access\n   - This happens through a webpage where you log into your bank\n   - After logging in, the bank sends a confirmation code to a URL you specify (the redirect_uri)\n\nFor local development, you have a few options:\n\n```python\n# Option 1: Run a temporary local server\nfrom http.server import HTTPServer, BaseHTTPRequestHandler\nimport webbrowser\n\nclass AuthHandler(BaseHTTPRequestHandler):\n    def do_GET(self):\n        # This will receive the auth code from the bank\n        print(f\"Received callback: {self.path}\")\n        self.send_response(200)\n        self.end_headers()\n        self.wfile.write(b\"You can close this window now\")\n\n# Start local server on port 8080\nserver = HTTPServer(('localhost', 8080), AuthHandler)\n\n# Your redirect URI would be:\nredirect_uri = 'http://localhost:8080/callback'\nreference = 'my_personal_reference_123'  # Any string to track this specific request\n\n# Get auth link\nlink = client.initialize_session(\n    institution_id=natwest_id,\n    redirect_uri=redirect_uri,\n    reference_id=reference\n)\n\n# Open bank login page\nwebbrowser.open(link['link'])\n\n# Wait for callback\nserver.handle_request()\n```\n\nThis is just the basic setup - in practice, you'd want to:\n1. Handle errors\n2. Store the received tokens securely\n3. Implement refresh token logic\n\nWould you like me to show you a more complete implementation? I can also explain how to:\n1. Store credentials securely in your notebook\n2. Handle token refresh\n3. Set up a more robust local callback server\n\nThe reference_id is just a string you choose to track this specific authentication request - it can be any string you want to use to identify this particular connection."}, "children": {"branch_2": null}, "parent_id": "501ee5bb", "home_branch": "branch_2"}, "77eff9a9": {"id": "77eff9a9", "message": {"role": "user", "content": "I can't increase the max_access_valid_for_days?"}, "children": {"branch_1": "d80b9899"}, "parent_id": "dc8a5103", "home_branch": "branch_1"}, "d80b9899": {"id": "d80b9899", "message": {"role": "assistant", "content": " No, unfortunately you cannot increase the 90-day limit. This is not a limitation of the API provider (Nordigen/GoCardless) but rather a regulatory requirement under PSD2 (Payment Services Directive 2) and Open Banking rules.\n\nThe 90-day reauthorization requirement is a mandatory security measure in UK/EU Open Banking. It ensures that access to your banking data requires your explicit consent every 90 days. Think of it like how some banking apps make you re-authenticate periodically for security.\n\nThe best way to handle this is to:\n1. Store the authorization expiry date\n2. Build in logic to prompt for reauthorization when needed\n3. Automate as much of the reauthorization flow as possible\n\nHere's a basic example of how you might handle this:\n\n```python\nfrom datetime import datetime, timedelta\n\ndef check_authorization(client, requisition_id):\n    requisition = client.requisition.get_requisition_by_id(requisition_id)\n    created = datetime.fromisoformat(requisition['created'])\n    expiry = created + timedelta(days=90)\n    \n    if datetime.now() > expiry:\n        # Need to reauthorize\n        new_link = client.initialize_session(\n            institution_id=bank_id,\n            redirect_uri='your_redirect_uri',\n            reference_id='your_reference'\n        )\n        return False, new_link\n    return True, None\n```\n\nWould you like me to show you how to implement a more complete authorization management system?"}, "children": {"branch_1": null}, "parent_id": "77eff9a9", "home_branch": "branch_1"}}, "current_id": "d80b9899", "current_branch": "branch_1", "root_id": "fbdb35bd"};
+
+        console.log('Data parsed successfully');
+        
+        marked.setOptions({ breaks: true, gfm: true });
+
+        function renderContent(content) {
+            if (typeof content === 'string') return marked.parse(content);
+            
+            let html = '';
+            for (const item of content) {
+                if (item.type === 'text') {
+                    html += marked.parse(item.text);
+                } else if (item.type === 'image_url') {
+                    const url = item.image_url.url;
+                    html += `<img src="${url}" class="thumbnail" onclick="window.open(this.src, '_blank')" alt="Click to view full size">`;
+                }
+            }
+            return html;
+        }
+
+        function getMessagesFromRoot(startId) {
+            console.log('getMessagesFromRoot called with startId:', startId);
+            let messages = [];
+            let currentId = startId;
+            
+            // First go back to root
+            while (currentId) {
+                const msg = chatData.messages[currentId];
+                console.log('Processing message:', msg);
+                messages.unshift(msg);
+                currentId = msg.parent_id;
+            }
+            
+            console.log('Messages from root:', messages);
+            return messages;
+        }
+
+        function getCompleteMessageChain(startId) {
+            console.log('getCompleteMessageChain called with startId:', startId);
+            let messages = getMessagesFromRoot(startId);
+            
+            // Now follow home_branches forward
+            let currentMsg = messages[messages.length - 1];
+            console.log('Starting forward traversal from:', currentMsg);
+            
+            while (currentMsg) {
+                // Get the next message following home_branch
+                const children = currentMsg.children;
+                const homeBranch = currentMsg.home_branch;
+                const nextId = children[homeBranch];
+                
+                console.log('Current message:', currentMsg.id);
+                console.log('Home branch:', homeBranch);
+                console.log('Children:', children);
+                console.log('Next ID:', nextId);
+                
+                if (!nextId) break;  // Stop if no child on home_branch
+                
+                currentMsg = chatData.messages[nextId];
+                messages.push(currentMsg);
+            }
+            
+            console.log('Final message chain:', messages);
+            return messages;
+        }
+
+        function onBranchSelect(messageId, selectedBranch) {
+            const msg = chatData.messages[messageId];
+            const childId = msg.children[selectedBranch];
+            
+            if (!childId) return;
+            
+            chatData.current_id = childId;
+            renderMessages();
+        }
+
+        function renderMessages() {
+            console.log('renderMessages called');
+            console.log('chatData:', chatData);
+            console.log('current_id:', chatData.current_id);
+            
+            const container = document.getElementById('chat-container');
+            container.innerHTML = '';
+            
+            const messages = getCompleteMessageChain(chatData.current_id);
+            console.log('Messages to render:', messages);
+            
+            messages.forEach(msg => {
+                console.log('Rendering message:', msg);
+                const div = document.createElement('div');
+                div.className = `message ${msg.message.role} ${msg.id === chatData.current_id ? 'current' : ''}`;
+                
+                let branchHtml = '';
+                if (msg.children && Object.keys(msg.children).length > 0) {
+                    const branches = Object.entries(msg.children)
+                        .filter(([_, childId]) => childId !== null);
+                    
+                    if (branches.length > 0) {
+                        const options = branches
+                            .map(([branch, childId]) => 
+                                `<option value="${branch}" ${childId === messages[messages.indexOf(msg) + 1]?.id ? 'selected' : ''}>${branch}</option>`)
+                            .join('');
+                        
+                        branchHtml = `
+                            <div class="branch-selector">
+                                <select onchange="onBranchSelect('${msg.id}', this.value)" 
+                                        ${branches.length === 1 ? 'disabled' : ''}>
+                                    ${options}
+                                </select>
+                            </div>
+                        `;
+                    }
+                }
+                
+                div.innerHTML = `
+                    <div class="message-header">
+                        <span>${msg.message.role} (${msg.id})</span>
+                    </div>
+                    <div class="message-content">
+                        ${renderContent(msg.message.content)}
+                    </div>
+                    ${branchHtml}
+                `;
+                
+                container.appendChild(div);
+            });
+            
+            MathJax.typeset();
+        }
+
+        function getAllBranches() {
+            const branches = new Set();
+            Object.values(chatData.messages).forEach(msg => {
+                Object.keys(msg.children).forEach(branch => {
+                    branches.add(branch);
+                });
+            });
+            return Array.from(branches);
+        }
+
+        function getBranchHierarchy() {
+            // Start from root and traverse the tree to build actual branch relationships
+            const hierarchy = new Map();  // branch -> parent branch
+            const visited = new Set();
+
+            function traverse(messageId) {
+                if (visited.has(messageId)) return;
+                visited.add(messageId);
+
+                const msg = chatData.messages[messageId];
+                const homeBranch = msg.home_branch;
+
+                // Check each child branch
+                Object.entries(msg.children).forEach(([childBranch, childId]) => {
+                    if (childId && childBranch !== homeBranch) {
+                        // This branch diverges here
+                        hierarchy.set(childBranch, homeBranch);
+                    }
+                    if (childId) {
+                        traverse(childId);
+                    }
+                });
+            }
+
+            traverse(chatData.root_id);
+            return hierarchy;
+        }
+
+        function renderGlobalBranchSelector() {
+            const select = document.getElementById('globalBranchSelect');
+            const branchHierarchy = getBranchHierarchy();
+            
+            // Find root branches (those without parents or with 'master' as parent)
+            const branches = Array.from(branchHierarchy.keys());
+            const rootBranches = ['master', ...branches.filter(b => 
+                !branchHierarchy.has(b) || branchHierarchy.get(b) === 'master'
+            )];
+
+            function getBranchLevel(branch) {
+                let level = 0;
+                let current = branch;
+                while (branchHierarchy.has(current)) {
+                    level++;
+                    current = branchHierarchy.get(current);
+                }
+                return level;
+            }
+
+            function getChildren(parentBranch) {
+                return branches.filter(b => branchHierarchy.get(b) === parentBranch);
+            }
+
+            function renderBranch(branch, level) {
+                const indent = '&nbsp;'.repeat(level * 2);
+                const selected = branch === chatData.current_branch ? 'selected' : '';
+                const option = `<option value="${branch}" ${selected}>${indent}${branch}</option>`;
+                
+                let html = option;
+                const children = getChildren(branch);
+                children.forEach(child => {
+                    html += renderBranch(child, level + 1);
+                });
+                return html;
+            }
+
+            select.innerHTML = rootBranches.map(branch => renderBranch(branch, 0)).join('');
+        }
+
+        function renderBranchOption(branch, level = 0) {
+            return `<option value="${branch}" ${branch === chatData.current_branch ? 'selected' : ''}>
+                ${'&nbsp;'.repeat(level * 2)}${branch}
+            </option>`;
+        }
+
+        function updateGlobalBranchSelector() {
+            const select = document.getElementById('globalBranchSelect');
+            const hierarchy = getBranchHierarchy();
+            
+            function addBranchOptions(obj, prefix = '', level = 0) {
+                Object.keys(obj).forEach(branch => {
+                    const fullBranch = prefix ? `${prefix}_${branch}` : branch;
+                    select.innerHTML += renderBranchOption(fullBranch, level);
+                    addBranchOptions(obj[branch], fullBranch, level + 1);
+                });
+            }
+            
+            select.innerHTML = '';
+            addBranchOptions(hierarchy);
+        }
+
+        function onGlobalBranchSelect(branch) {
+            const branchTip = Object.entries(chatData.messages).find(([_, msg]) => 
+                msg.children[branch] === null
+            );
+            
+            if (!branchTip) {
+                console.error(`Could not find tip of branch ${branch}`);
+                return;
+            }
+
+            chatData.current_id = branchTip[0];
+            chatData.current_branch = branch;
+            renderMessages();
+        }
+
+
+        // Theme toggle functionality
+        function toggleTheme() {
+            document.body.classList.toggle('dark-mode');
+            const button = document.getElementById('themeToggle');
+            button.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        }
+
+        // Add event listeners
+        document.getElementById('globalBranchSelect').addEventListener('change', (e) => {
+            onGlobalBranchSelect(e.target.value);
+        });
+
+        document.getElementById('themeToggle').addEventListener('click', toggleTheme);
+
+        // Initialize theme based on configuration
+        document.body.classList.add('dark-mode'); document.getElementById('themeToggle').textContent = '☀️';
+
+
+        // Initial render
+        renderMessages();
+
+        // Call this after initial render
+        renderGlobalBranchSelector();
+
+    </script>
+</body>
+</html>
