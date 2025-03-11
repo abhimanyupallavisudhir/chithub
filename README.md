@@ -11,3 +11,5 @@ For useful LLM chats I'd like to share, made with [chit](https://github.com/abhi
   - [crypto](public/learning/crypto.html)
 - tools
   - [banking](public/tools/banking.html)
+
+go back to [abhimanyu.io](https://abhimanyu.io)
